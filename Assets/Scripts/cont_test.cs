@@ -25,14 +25,14 @@ public class cont_test : MonoBehaviour {
 		GUILayout.Label(AxisLabel("7th axis"));
 		GUILayout.Label(AxisLabel("8th axis"));
 	
-		GUILayout.Label(AxisLabel("joystick button 0"));
-		GUILayout.Label(AxisLabel("joystick button 1"));
-		GUILayout.Label(AxisLabel("joystick button 2"));
-		GUILayout.Label(AxisLabel("joystick button 3"));
-		GUILayout.Label(AxisLabel("joystick button 4"));
-		GUILayout.Label(AxisLabel("joystick button 5"));
-		GUILayout.Label(AxisLabel("joystick button 6"));
-		GUILayout.Label(AxisLabel("joystick button 7"));
+		GUILayout.Label(AxisLabel("Square"));
+		GUILayout.Label(AxisLabel("Cross"));
+		GUILayout.Label(AxisLabel("Circle"));
+		GUILayout.Label(AxisLabel("Triangle"));
+		GUILayout.Label(AxisLabel("L1"));
+		GUILayout.Label(AxisLabel("R1"));
+		GUILayout.Label(AxisLabel("L2"));
+		GUILayout.Label(AxisLabel("R2"));
 	}
 
 	string AxisLabel(string axisName) {
