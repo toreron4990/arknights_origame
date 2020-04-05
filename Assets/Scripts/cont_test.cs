@@ -24,7 +24,7 @@ public class cont_test : MonoBehaviour {
 		GUILayout.Label(AxisLabel("6th axis"));
 		GUILayout.Label(AxisLabel("7th axis"));
 		GUILayout.Label(AxisLabel("8th axis"));
-	
+
 		GUILayout.Label(AxisLabel("Square"));
 		GUILayout.Label(AxisLabel("Cross"));
 		GUILayout.Label(AxisLabel("Circle"));
