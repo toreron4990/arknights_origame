@@ -5,14 +5,19 @@ using UnityEngine;
 public class AnimationChange : MonoBehaviour
 {
     private Animator animator;
-
-    [SerializeField]
+    private GameObject refObj;
     private PlayerMoveController pmController;
+    private AnimatorStateInfo animInfo;
+
 
     private void Start()
     {
         animator = this.gameObject.GetComponent<Animator>();
+        refObj = transform.root.gameObject;
+        pmController = refObj.GetComponent<PlayerMoveController>();
     }
+
+    bool animFlag = false;
 
     // Update is called once per frame
     void Update()
@@ -24,9 +29,36 @@ public class AnimationChange : MonoBehaviour
             animator.Play("Run");
         }
 
-        if (pmController.key == 0 && pmController.isGround)
+        animInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (animInfo.fullPathHash == Animator.StringToHash("Base Layer.Run"))
         {
-            animator.Play("Idle");
+            if (pmController.key == 0 && pmController.isGround)
+            {
+                animator.Play("Idle");
+                animFlag = false;
+            }
         }
+        else
+        {
+            if (pmController.key == 0 && pmController.isGround && !animFlag)
+            {
+                animator.Play("Idle");
+                animFlag = false;
+            }
+        }
+
+       
+
+        if (Input.GetButton("Square") && pmController.isGround)
+        {
+            animator.Play("Attack_N");
+            animFlag = true;
+        }
+    }
+
+    public void AnimFlagFalse()
+    {
+        animFlag = false;
     }
 }
