@@ -9,11 +9,14 @@ public class PlayerMoveController : MonoBehaviour
 
     float jumpForce = 1000f;       // ジャンプ時に加える力
     float jumpThreshold = 1f;    // ジャンプ中か判定するための閾値
-    float runForce = 40f;       // 走り始めに加える力
+    float runForce = 100f;       // 走り始めに加える力
     float runThreshold = 20f;   // 速度切り替え判定のための閾値
     float runSpeed = 0.7f;       // 走っている間の速度
-    bool isGround = true;        // 地面と接地しているか管理するフラグ
-    int key = 0;                 // 左右の入力管理
+    public bool isGround = true;        // 地面と接地しているか管理するフラグ
+    public int key = 0;                 // 左右の入力管理
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -57,7 +60,7 @@ public class PlayerMoveController : MonoBehaviour
 		// 左右の移動。一定の速度に達するまではAddforceで力を加え、それ以降はtransform.positionを直接書き換えて同一速度で移動する
 		float speedX = Mathf.Abs (this.rb.velocity.x);
         if (key == 0) {
-            rb.velocity = new Vector3(rb.velocity.x * 0.95f,rb.velocity.y,0);
+            rb.velocity = new Vector3(rb.velocity.x * 0.9f,rb.velocity.y,0);
         }else{
 		    if (speedX < this.runThreshold) {
             Debug.Log (transform.up);
