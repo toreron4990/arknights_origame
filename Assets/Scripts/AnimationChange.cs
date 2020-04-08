@@ -24,7 +24,7 @@ public class AnimationChange : MonoBehaviour
     //スキル関係変数
     private bool skillAnimFlag = false;
     private float skillChargeCount = 0.0f;
-    private float skillChargeCountMax = 2.0f;
+    private float skillChargeCountMax = 1.0f;
     private string skillName;
 
 
@@ -32,9 +32,11 @@ public class AnimationChange : MonoBehaviour
     void Update()
     {
         //スキルチャージ時間を超えた場合
-        if (skillChargeCount >= skillChargeCountMax)
+        if (skillChargeCount >= skillChargeCountMax || (skillChargeCount != 0 && Input.GetButtonUp("Circle")) )
         {
-
+            //対応したスキルをプレイ
+            animator.Play(skillName);
+            skillChargeCount = 0;
         }
         //一度でもチャージが始まっていれば
         else if(skillChargeCount != 0)
@@ -46,7 +48,7 @@ public class AnimationChange : MonoBehaviour
         else
         {
             //通常攻撃ボタンが押された時 かつ　攻撃フラグが立っていなければ
-            if (Input.GetButtonDown("Square") && attackAnimFlag == false)
+            if (Input.GetButtonDown("Square") && attackAnimFlag == false && skillAnimFlag == false)
             {
                 //X軸入力がある時
                 if (Input.GetAxis("X axis") == 1 || Input.GetAxis("X axis") == -1)
@@ -76,12 +78,37 @@ public class AnimationChange : MonoBehaviour
             }
 
             //スキルボタンが押された時
-            if (Input.GetButton("Circle"))
+            if (Input.GetButtonDown("Circle") && skillAnimFlag == false)
             {
                 //時間を追加
                 skillChargeCount += Time.deltaTime;
                 //通常攻撃アニメのフラグを解除(スキルで通常攻撃をキャンセル可能)
                 attackAnimFlag = false;
+
+                //X軸入力がある時
+                if (Input.GetAxis("X axis") == 1 || Input.GetAxis("X axis") == -1)
+                {
+                    SkillNameSet("Attack_N", "Attack_N");
+                }
+                //X軸入力がない時
+                else
+                {
+                    //Y軸入力が上
+                    if (Input.GetAxis("Y axis") == 1)
+                    {
+                        SkillNameSet("Attack_N", "Attack_N");
+                    }
+                    //Y軸入力が下
+                    else if (Input.GetAxis("Y axis") == -1)
+                    {
+                        SkillNameSet("Attack_N", "Attack_N");
+                    }
+                    //いずれの入力もないニュートラルの時
+                    else
+                    {
+                        SkillNameSet("Attack_N", "Attack_N");
+                    }
+                }
             }
 
         }
@@ -112,16 +139,16 @@ public class AnimationChange : MonoBehaviour
         pmController.canMove = false;
     }
 
-    //スキルアニメーション実行処理
-    private void StartSkillAnimation(string groundName, string airName)
+    //スキルアニメーション名セット
+    private void SkillNameSet(string groundName, string airName)
     {
         skillName = pmController.isGround ? groundName : airName;
-        animator.Play(skillName);
+        animator.Play(skillName + "_Charge");
         skillAnimFlag = true;
         pmController.canMove = false;
     }
 
-    //アニメーション終了時に呼び出す関数 ***もしキャンセル時にスキルが消えるならこの処理を変える
+    //アニメーション終了時に呼び出す関数
     public void AnimFlagFalse()
     {
         attackAnimFlag = false;

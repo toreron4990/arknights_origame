@@ -59,19 +59,24 @@ public class PlayerMoveController : MonoBehaviour
             //減速係数を軽減する
             deceleration = 0.97f;
         }
+        //通常時
         else
         {
             deceleration = 0.9f;
+
+            // 設置している時にXキー押下でジャンプ
+            if (isGround)
+            {
+                if (Input.GetButton("Cross"))
+                {
+                    isGround = false;
+                    this.rb.AddForce(transform.up * this.jumpForce);
+                    rb.velocity = new Vector3(rb.velocity.x, 0, 0);
+                }
+            }
         }
 
-        // 設置している時にXキー押下でジャンプ
-        if (isGround) {
-			if (Input.GetButton("Cross")) {
-                isGround = false;
-				this.rb.AddForce (transform.up * this.jumpForce);
-                rb.velocity = new Vector3(rb.velocity.x,0,0);
-			}
-		}
+        
 		// 左右の移動。一定の速度に達するまではAddforceで力を加え、それ以降はtransform.positionを直接書き換えて同一速度で移動する
 		float speedX = Mathf.Abs (this.rb.velocity.x);
         if (key == 0) {
