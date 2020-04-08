@@ -8,14 +8,13 @@ public class PlayerMoveController : MonoBehaviour
 　　Animator animator;
 
     float jumpForce = 1000f;       // ジャンプ時に加える力
-    float jumpThreshold = 1f;    // ジャンプ中か判定するための閾値
     float runForce = 100f;       // 走り始めに加える力
     float runThreshold = 20f;   // 速度切り替え判定のための閾値
-    float runSpeed = 0.7f;       // 走っている間の速度
     public bool isGround = true;        // 地面と接地しているか管理するフラグ
     public int key = 0;                 // 左右の入力管理
+    private float deceleration = 0.9f;
 
-
+    public bool canMove = true;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +26,11 @@ public class PlayerMoveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        GetInputKey();
+
+        if (canMove)
+        {
+            GetInputKey();
+        }
         Move();
     }
     
@@ -45,25 +48,36 @@ public class PlayerMoveController : MonoBehaviour
 	        key = 0;
         }
 	}
-    void Move(){
-		// 設置している時にXキー押下でジャンプ
 
-		if (isGround) {
+    void Move(){
+
+        //スキル発動中で移動不可の場合
+        if (!canMove)
+        {
+            //移動方向を0に
+            key = 0;
+            //減速係数を軽減する
+            deceleration = 0.97f;
+        }
+        else
+        {
+            deceleration = 0.9f;
+        }
+
+        // 設置している時にXキー押下でジャンプ
+        if (isGround) {
 			if (Input.GetButton("Cross")) {
                 isGround = false;
 				this.rb.AddForce (transform.up * this.jumpForce);
                 rb.velocity = new Vector3(rb.velocity.x,0,0);
-                Debug.Log (rb.velocity);
-
 			}
 		}
 		// 左右の移動。一定の速度に達するまではAddforceで力を加え、それ以降はtransform.positionを直接書き換えて同一速度で移動する
 		float speedX = Mathf.Abs (this.rb.velocity.x);
         if (key == 0) {
-            rb.velocity = new Vector3(rb.velocity.x * 0.9f,rb.velocity.y,0);
+            rb.velocity = new Vector3(rb.velocity.x * deceleration, rb.velocity.y,0);
         }else{
 		    if (speedX < this.runThreshold) {
-            Debug.Log (transform.up);
                 if (!isGround) {
                     //未入力の場合は key の値が0になるため移動しない
                     this.rb.AddForce (transform.right * key * this.runForce / 2);
@@ -72,10 +86,10 @@ public class PlayerMoveController : MonoBehaviour
                 }
 		    } else {
                 rb.velocity = new Vector3(rb.velocity.x,rb.velocity.y,0);
-                //this.transform.position += new Vector3 (runSpeed * Time.deltaTime * key , 0, 0);
             }
         }
 	}
+
     // 着地判定
 	void OnTriggerEnter2D(Collider2D col){
 		if (col.gameObject.tag == "Ground") {

@@ -2,18 +2,12 @@
 using System.Collections;
 
 public class cont_test : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-
-	}
-
 	// Update is called once per frame
 	void Update () {
 		float hori = Input.GetAxis ("X axis");
 		float vert = Input.GetAxis ("Y axis");
 		if(( hori != 0) ||  (vert != 0) ){
-			Debug.Log ("stick:"+hori+","+vert );
+			//Debug.Log ("stick:"+hori+","+vert );
 		}
 	}
 
