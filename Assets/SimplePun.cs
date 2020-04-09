@@ -5,6 +5,7 @@ using Photon.Realtime;
 
 public class SimplePun : MonoBehaviourPunCallbacks {
 
+
 	// Use this for initialization
 	void Start () {
 		//旧バージョンでは引数必須でしたが、PUN2では不要です。
@@ -27,9 +28,11 @@ public class SimplePun : MonoBehaviourPunCallbacks {
 	//ルームに入室後に呼び出される
 	public override void OnJoinedRoom(){
 		//キャラクターを生成
-		GameObject monster = PhotonNetwork.Instantiate("texas", Vector3.zero, Quaternion.identity, 0);
+		GameObject player = PhotonNetwork.Instantiate("texas", Vector3.zero, Quaternion.identity, 0);
 		//自分だけが操作できるようにスクリプトを有効にする
-		MonsterScript monsterScript = monster.GetComponent<MonsterScript>();
-		monsterScript.enabled = true;
+		PlayerMoveController PlayerMoveController = player.GetComponent<PlayerMoveController>();
+		AnimationChange AnimationChange = player.transform.Find("Sprite").gameObject.GetComponent<AnimationChange>();
+		PlayerMoveController.enabled = true;
+		AnimationChange.enabled = true;
 	}
 }
