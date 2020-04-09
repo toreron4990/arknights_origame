@@ -35,7 +35,10 @@ public class AnimationChange : MonoBehaviour
         if (skillChargeCount >= skillChargeCountMax || (skillChargeCount != 0 && Input.GetButtonUp("Circle")) )
         {
             //対応したスキルをプレイ
-            animator.Play(skillName);
+            animator.PlayInFixedTime(skillName, 0, 0f);
+            //攻撃時のアクション
+            OnlyOnceAction(attackName);
+            //カウントリセット
             skillChargeCount = 0;
         }
         //一度でもチャージが始まっていれば
@@ -53,7 +56,7 @@ public class AnimationChange : MonoBehaviour
                 //X軸入力がある時
                 if (Input.GetAxis("X axis") == 1 || Input.GetAxis("X axis") == -1)
                 {
-                    StartAttackAnimation("Attack_N", "Attack_N");
+                    StartAttackAnimation("Attack_Up", "Attack_Up");
                 }
                 //X軸入力がない時
                 else
@@ -66,7 +69,7 @@ public class AnimationChange : MonoBehaviour
                     //Y軸入力が下
                     else if (Input.GetAxis("Y axis") == -1)
                     {
-                        StartAttackAnimation("Attack_N", "Attack_N");
+                        StartAttackAnimation("Attack_N", "Attack_Up");
                     }
                     //いずれの入力もないニュートラルの時
                     else
@@ -84,6 +87,7 @@ public class AnimationChange : MonoBehaviour
                 skillChargeCount += Time.deltaTime;
                 //通常攻撃アニメのフラグを解除(スキルで通常攻撃をキャンセル可能)
                 attackAnimFlag = false;
+                attackName = "";
 
                 //X軸入力がある時
                 if (Input.GetAxis("X axis") == 1 || Input.GetAxis("X axis") == -1)
@@ -128,13 +132,18 @@ public class AnimationChange : MonoBehaviour
                 animator.Play("Idle");
             }
         }
+
+
     }
 
     //通常攻撃アニメーション実行処理
     private void StartAttackAnimation(string groundName, string airName)
     {
         attackName = pmController.isGround ? groundName : airName;
-        animator.Play(attackName);
+        animator.PlayInFixedTime(attackName, 0, 0f);
+        //攻撃時のアクション
+        OnlyOnceAction(attackName);
+        //フラグ処理
         attackAnimFlag = true;
         pmController.canMove = false;
     }
@@ -143,7 +152,8 @@ public class AnimationChange : MonoBehaviour
     private void SkillNameSet(string groundName, string airName)
     {
         skillName = pmController.isGround ? groundName : airName;
-        animator.Play(skillName + "_Charge");
+        animator.PlayInFixedTime(skillName + "_Charge", 0, 0f);
+        //フラグ処理
         skillAnimFlag = true;
         pmController.canMove = false;
     }
@@ -152,7 +162,35 @@ public class AnimationChange : MonoBehaviour
     public void AnimFlagFalse()
     {
         attackAnimFlag = false;
+        attackName = "";
         skillAnimFlag = false;
+        skillName = "";
         skillChargeCount = 0.0f;
+    }
+
+    //
+    private void OnlyOnceAction(string name)
+    {
+        switch (name)
+        {
+            case "Attack_Up":
+                //ジャンプ直後の場合か否か
+                if (!pmController.jumpNow)
+                {
+                    pmController.isGround = false;
+                    pmController.rb.velocity = new Vector3(pmController.rb.velocity.x, 0, 0);
+                    pmController.rb.AddForce(transform.up * 1500f);
+                }
+                else
+                {
+                    //Forceが二重にかかるのを防ぐ
+                    pmController.rb.AddForce(transform.up * (1500f - pmController.jumpForce));
+                }
+                
+                break;
+
+            default:
+                break;
+        } 
     }
 }

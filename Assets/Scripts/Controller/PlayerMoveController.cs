@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PlayerMoveController : MonoBehaviour
 {
-　  Rigidbody2D rb;
+　  public Rigidbody2D rb;
 　　Animator animator;
 
     float dodgeForce = 1500f; //回避時に加える力
     float dodgeCoolTime = 0.0f; //回避のクールタイム
     float dodgeCoolTimeMax = 0.5f; //回避のクールタイム最大値
-    float jumpForce = 1000f;       // ジャンプ時に加える力
+    public float jumpForce = 1000f;       // ジャンプ時に加える力
+    public bool jumpNow = false;       // ジャンプした直後判定
     float runForce = 100f;       // 走り始めに加える力
     float runThreshold = 20f;   // 速度切り替え判定のための閾値
     public bool isGround = true;        // 地面と接地しているか管理するフラグ
@@ -65,6 +66,8 @@ public class PlayerMoveController : MonoBehaviour
 
     void Move(){
 
+        jumpNow = false;
+
         //スキル発動中で移動不可の場合
         if (!canMove)
         {
@@ -77,26 +80,27 @@ public class PlayerMoveController : MonoBehaviour
             // 設置している時
             if (isGround)
             {
-                //Xキー押下でジャンプ
-                if (Input.GetButton("Cross"))
-                {
-                    isGround = false;
-                    this.rb.AddForce(transform.up * this.jumpForce);
-                    rb.velocity = new Vector3(rb.velocity.x, 0, 0);
-                }
-
                 //R1,L1押下でダッシュ回避
-                if ( (Input.GetButton("R1") || Input.GetButton("L1") )&& key != 0 && dodgeCoolTime <= 0)
+                if ((Input.GetButtonDown("R1") || Input.GetButtonDown("L1")) && key != 0 && dodgeCoolTime <= 0)
                 {
                     //ダッシュが逆方向なら一度速度を0にする
                     if ((key == -1 && rb.velocity.x > 0) || (key == 1 && rb.velocity.x < 0))
                     {
-                        rb.velocity = new Vector3(0, rb.velocity.y, 0);
+                        rb.velocity = new Vector3(0, 0, 0);
                     }
                     this.rb.AddForce(transform.right * dodgeForce * key);
+
                     dodgeCoolTime = dodgeCoolTimeMax;
                 }
 
+                //Xキー押下でジャンプ
+                if (Input.GetButtonDown("Cross"))
+                {
+                    isGround = false;
+                    rb.velocity = new Vector3(rb.velocity.x, 0, 0);
+                    rb.AddForce(transform.up * jumpForce);
+                    jumpNow = true;
+                }
             }
 
 
