@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class PlayerMoveController : MonoBehaviour
+public class PlayerMoveController : MonoBehaviour, Photon.Pun.IPunObservable
 {
 　  public Rigidbody2D rb;
 　　Animator animator;
@@ -39,7 +42,7 @@ public class PlayerMoveController : MonoBehaviour
 
         Move();
     }
-    
+
     //クールタイムの減少処理
     private void CoolTimeDown()
     {
@@ -144,5 +147,7 @@ public class PlayerMoveController : MonoBehaviour
 			if(!isGround)
 				isGround = true;
 		}
+	}
+	public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
 	}
 }
