@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
+using Photon.Realtime;
 
-public class AnimationChange : MonoBehaviour
+public class AnimationChange : MonoBehaviour, IPunObservable
 {
     private Animator animator;
     private GameObject refObj;
@@ -124,12 +126,14 @@ public class AnimationChange : MonoBehaviour
             //移動入力があるなら
             if (pmController.key != 0)
             {
-                animator.Play("Run");
+                animator.SetBool("run", true);
+                //animator.Play("Run");
             }
             //入力がない時
             else
             {
-                animator.Play("Idle");
+                animator.SetBool("run", false);
+                //animator.Play("Idle");
             }
         }
 
@@ -186,11 +190,13 @@ public class AnimationChange : MonoBehaviour
                     //Forceが二重にかかるのを防ぐ
                     pmController.rb.AddForce(transform.up * (1500f - pmController.jumpForce));
                 }
-                
+
                 break;
 
             default:
                 break;
-        } 
+        }
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info){
     }
 }

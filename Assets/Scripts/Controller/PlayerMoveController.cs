@@ -28,6 +28,8 @@ public class PlayerMoveController : MonoBehaviour, Photon.Pun.IPunObservable
     {
         this.rb = GetComponent<Rigidbody2D> ();
         this.animator = GetComponent<Animator> ();
+        PhotonNetwork.SendRate = 20; // 1秒間にメッセージ送信を行う回数
+        PhotonNetwork.SerializationRate = 100; // 1秒間にオブジェクト同期を行う回数
     }
 
     // Update is called once per frame

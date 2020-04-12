@@ -591,7 +591,7 @@ namespace Photon.Pun
 
             set
             {
-                if (value > SendRate)
+                if (value > SendRate*10)
                 {
                     Debug.LogError("Error: Can not set the OnSerialize rate higher than the overall SendRate.");
                     value = SendRate;
